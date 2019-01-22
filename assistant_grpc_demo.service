@@ -1,0 +1,21 @@
+# This service can be used to run your code automatically on startup.
+
+[Unit]
+Description=voice recognizer
+Wants=network-online.target
+After=network-online.target
+Wants=systemd-timesyncd.service
+After=systemd-timesyncd.service
+
+[Service]
+Environment=DISPLAY=:0
+Type=simple
+ExecStart=/usr/bin/python3 -u examples/voice/assistant_grpc_demo_snowboy.py --model='/home/pi/AIY-projects-python/src/mod/resources/alexa/alexa_02092017.umdl'
+WorkingDirectory=/home/pi/AIY-projects-python/src
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
