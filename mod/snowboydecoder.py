@@ -131,12 +131,9 @@ class HotwordDetector(object):
         logger.debug("detecting...")
 
         while self._running is True:
-            if interrupt_check():
-                logger.debug("detect voice break")
-                break
             with Recorder() as recorder:
                 for data in recorder.record(AUDIO_FORMAT,
-                                         chunk_duration_sec=0.2,
+                                         chunk_duration_sec=0.02,
                                          on_start=self.start_detect,
                                          on_stop=self.stop_detect):
 
@@ -154,6 +151,10 @@ class HotwordDetector(object):
                         if callback is not None:
                             callback()
 
+            if interrupt_check():
+                logger.debug("detect voice break")
+                recorder.done()
+                break
         logger.debug("finished.")
 
     def terminate(self):
