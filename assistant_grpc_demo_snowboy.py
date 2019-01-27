@@ -32,6 +32,12 @@ def volume(string):
         raise argparse.ArgumentTypeError('Volume must be in [0...100] range.')
     return value
 
+def sensitivity(string):
+    value = float(string)
+    if value <= 0 or value > 1:
+        raise argparse.ArgumentTypeError('Sensitivity must be float between 0 and 1.')
+    return value
+
 def locale_language():
     language, _ = locale.getdefaultlocale()
     return language
@@ -43,18 +49,19 @@ def main():
     parser = argparse.ArgumentParser(description='Assistant service example.')
     parser.add_argument('--language', default=locale_language())
     parser.add_argument('--volume', type=volume, default=100)
-    parser.add_argument('--model', default='src/mod/resources/alexa/alexa_02092017.umdl')
+    parser.add_argument('--model', 
+                        default='src/mod/resources/alexa/alexa_02092017.umdl')
+    parser.add_argument('--sensitivity', type=sensitivity, default=0.5)
     args = parser.parse_args()
 
-    detector = snowboydecoder.HotwordDetector(args.model, sensitivity=0.5)
+    detector = snowboydecoder.HotwordDetector(args.model,
+                                              sensitivity=args.sensitivity)
     with Board() as board:
         assistant = AssistantServiceClientWithLed(board=board,
                                                   volume_percentage=args.volume,
                                                   language_code=args.language)
         while True:
-            #logging.info('Press button to start conversation...')
             logging.info('Speak own hotword and speak')
-            #board.button.wait_for_press()
             detector.start()
             logging.info('Conversation started!')
             assistant.conversation()
