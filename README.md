@@ -2,7 +2,11 @@
 Snowboy API for AIY Voice Kit.    
 Replace your AIY Voice Kit hotword [OK. Google] to [alexa],[jarvis]...etc  
 You can easily replace your program.  
-See. [diff AIY Voice Kit Press button and own hotword program](#diff-original-programaiy-voice-kit-press-button-snowboy-wakeword-program)
+
+# Requirement
+
+- [AIY Kits Release 2018-08-03](https://github.com/google/aiyprojects-raspbian/releases/tag/v20180803)
+- Google AIY Voice Kit V2
 
 # Before How to install
 Buy The AIY Voice Kit and complete the tutorial.  
@@ -22,19 +26,18 @@ If the demo has worked,next step.
 cd /home/pi/
 # libatlas-base-dev need snowboy module.
 sudo apt-get install libatlas-base-dev
-git clone https://github.com/senyoltw/custom-hotword-for-aiy-voicekit
 
 # copy snowboy module and sample program.
-cp -ipr custom-hotword-for-aiy-voicekit/mod AIY-projects-python/src/
-cp -ip custom-hotword-for-aiy-voicekit/assistant_grpc_demo_snowboy.py AIY-projects-python/src/examples/voice/
+cp -ipr custom-hotword-for-aiy-voicekit/mod ~/AIY-projects-python/src/
+cp -ip custom-hotword-for-aiy-voicekit/assistant_grpc_demo_snowboy.py ~/AIY-projects-python/src/examples/voice/
 ```
 
 # How to use
 
 ```
-cd AIY-voice-kit-python
+AIY-projects-shell.sh
 chmod a+x src/examples/voice/assistant_grpc_demo_snowboy.py
-src/examples/voice/assistant_grpc_demo_snowboy.py src/mod/resources/alexa/alexa_02092017.umdl
+src/examples/voice/assistant_grpc_demo_snowboy.py --model=src/mod/resources/alexa/alexa_02092017.umdl
 ```
 Say "alexa" and talk your google assistant!
 
@@ -72,49 +75,6 @@ and run program argument your hotword
 
 ```
 cd AIY-voice-kit-python
-src/examples/voice/assistant_grpc_demo_snowboy.py [hotword].pmdl
+src/examples/voice/assistant_grpc_demo_snowboy.py --model=[hotword].pmdl
 ```
 
-# diff original program(AIY Voice Kit Press button), snowboy wakeword program
-```
-$ diff -u src/examples/voice/assistant_grpc_demo.py src/examples/voice/assistant_grpc_demo_snowboy.py
---- src/examples/voice/assistant_grpc_demo.py	2018-04-14 06:05:49.000000000 +0900
-+++ src/examples/voice/assistant_grpc_demo_snowboy.py	2018-06-03 14:31:40.356212421 +0900
-@@ -21,6 +21,16 @@
- import aiy.audio
- import aiy.voicehat
-
-+import mod.snowboydecoder as snowboydecoder
-+import sys
-+
-+if len(sys.argv) == 1:
-+    print("Error: need to specify model name")
-+    print("Usage: python demo.py your.model")
-+    sys.exit(-1)
-+
-+model = sys.argv[1]
-+
- logging.basicConfig(
-     level=logging.INFO,
-     format="[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-@@ -31,12 +41,15 @@
-     status_ui = aiy.voicehat.get_status_ui()
-     status_ui.status('starting')
-     assistant = aiy.assistant.grpc.get_assistant()
--    button = aiy.voicehat.get_button()
-+    #button = aiy.voicehat.get_button()
-+    detector = snowboydecoder.HotwordDetector(model, sensitivity=0.5)
-     with aiy.audio.get_recorder():
-         while True:
-             status_ui.status('ready')
--            print('Press the button and speak')
--            button.wait_for_press()
-+            #print('Press the button and speak')
-+            print('Speak own hotword and speak')
-+            #button.wait_for_press()
-+            detector.start()
-             status_ui.status('listening')
-             print('Listening...')
-             text, audio = assistant.recognize()
-pi@raspberrypi:~/AIY-voice-kit-python $
-```
