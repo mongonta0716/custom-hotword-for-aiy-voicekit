@@ -6,7 +6,9 @@ You can easily replace your program.
 # Requirement
 
 - [AIY Kits Release 2018-08-03](https://github.com/google/aiyprojects-raspbian/releases/tag/v20180803)
-- Google AIY Voice Kit V2
+- Google AIY Voice Kit V1 or V2
+
+assistant_grpc_demo_snowboy_with_leds.py require Voice Kit V2.
 
 # Before How to install
 Buy The AIY Voice Kit and complete the tutorial.  
@@ -43,7 +45,7 @@ Say "alexa" and talk your google assistant!
 
 sample log
 ```
-pi@raspberrypi:~/AIY-voice-kit-python $ src/examples/voice/assistant_grpc_demo_snowboy.py src/mod/resources/alexa/alexa_02092017.umdl
+pi@raspberrypi:~/AIY-voice-kit-python $ src/examples/voice/assistant_grpc_demo_snowboy.py --model=src/mod/resources/alexa/alexa_02092017.umdl
 /opt/aiy/projects-python/src/aiy/_drivers/_led.py:51: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
   GPIO.setup(channel, GPIO.OUT)
 [2018-06-03 14:33:26,194] INFO:recorder:started recording
